@@ -174,9 +174,6 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		//menu item selected
 		switch (item.getItemId()) {
-		case R.id.action_shuffle:
-			//shuffle
-			break;
 		case R.id.action_end:
 			stopService(playIntent);
 			playerSrv=null;
