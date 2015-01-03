@@ -91,7 +91,7 @@ MediaPlayer.OnCompletionListener {
 			player.setDataSource(getApplicationContext(), trackUri);
 		}
 		catch(Exception e){
-			Log.e("BOOK SERVICE", "Error setting data source", e);
+			Log.e("PLAYER SERVICE", "Error setting data source", e);
 		}
 		player.prepareAsync(); 
 	}
