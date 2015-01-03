@@ -14,10 +14,11 @@ import android.os.PowerManager;
 import android.util.Log;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.Context;
 
 public class PlayerService extends Service implements
 MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-MediaPlayer.OnCompletionListener {
+MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 
 	//media player
 	private MediaPlayer player;
@@ -26,7 +27,7 @@ MediaPlayer.OnCompletionListener {
 	//current position
 	private int bookPosn;
 	//binder
-	private final IBinder musicBind = new MusicBinder();
+	private final IBinder bookBind = new MusicBinder();
     // book title
     private String bookTitle="";
     // Notification ID
@@ -40,10 +41,11 @@ MediaPlayer.OnCompletionListener {
 		//create player
 		player = new MediaPlayer();
 		//initialize
-		initMusicPlayer();
+		initMediaPlayer();
+        requestAudioFocus();
 	}
 
-	public void initMusicPlayer(){
+	public void initMediaPlayer(){
 		//set player properties
 		player.setWakeMode(getApplicationContext(),
 				PowerManager.PARTIAL_WAKE_LOCK);
@@ -59,7 +61,37 @@ MediaPlayer.OnCompletionListener {
 		books = theBooks;
 	}
 
-	//binder
+    @Override
+    public void onAudioFocusChange(int focusChange) {
+        switch (focusChange) {
+            case AudioManager.AUDIOFOCUS_GAIN:
+                // Resume playback, set volume back to full
+                if (player == null) initMediaPlayer();
+                if (!player.isPlaying()) player.start();
+                player.setVolume(1.0f, 1.0f);
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS:
+                // Stop playback and release MediaPlayer
+                if (player.isPlaying()) player.stop();
+                player.release();
+                player = null;
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
+                // Pause playback, but don't release MediaPlayer
+                if (player.isPlaying()) player.pause();
+                break;
+
+            case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
+                // Reduce volume
+                // TODO: Make dependent on config option
+                if (player.isPlaying()) player.setVolume(0.1f, 0.1f);
+                break;
+        }
+    }
+
+    //binder
 	public class MusicBinder extends Binder {
 		PlayerService getService() {
 			return PlayerService.this;
@@ -69,7 +101,7 @@ MediaPlayer.OnCompletionListener {
 	//activity will bind to service
 	@Override
 	public IBinder onBind(Intent intent) {
-		return musicBind;
+		return bookBind;
 	}
 
 	//release resources when unbind
@@ -181,5 +213,13 @@ MediaPlayer.OnCompletionListener {
     @Override
     public void onDestroy() {
         stopForeground(true);
+        if (player != null) player.release();
+    }
+
+    private boolean requestAudioFocus() {
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int result = audioManager.requestAudioFocus(this, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+
+        return (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED);
     }
 }
