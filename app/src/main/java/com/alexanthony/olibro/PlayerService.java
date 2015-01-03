@@ -12,6 +12,8 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
+import android.app.Notification;
+import android.app.PendingIntent;
 
 public class PlayerService extends Service implements
 MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -25,6 +27,10 @@ MediaPlayer.OnCompletionListener {
 	private int bookPosn;
 	//binder
 	private final IBinder musicBind = new MusicBinder();
+    // book title
+    private String bookTitle="";
+    // Notification ID
+    private static final int NOTIFY_ID=1;
 
 	public void onCreate(){
 		//create the service
@@ -39,7 +45,7 @@ MediaPlayer.OnCompletionListener {
 
 	public void initMusicPlayer(){
 		//set player properties
-		player.setWakeMode(getApplicationContext(), 
+		player.setWakeMode(getApplicationContext(),
 				PowerManager.PARTIAL_WAKE_LOCK);
 		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
 		//set listeners
@@ -80,6 +86,7 @@ MediaPlayer.OnCompletionListener {
 		player.reset();
 		//get book
 		Book playBook = books.get(bookPosn);
+        bookTitle = playBook.getTitle();
 		//get id
 		long currBook = playBook.getID();
 		//set uri
@@ -103,12 +110,15 @@ MediaPlayer.OnCompletionListener {
 
 	@Override
 	public void onCompletion(MediaPlayer mp) {
-		// TODO Auto-generated method stub
+        if(player.getCurrentPosition() > 0){
+            mp.reset();
+            playNext();
+        }
 	}
 
 	@Override
 	public boolean onError(MediaPlayer mp, int what, int extra) {
-		// TODO Auto-generated method stub
+        mp.reset();
 		return false;
 	}
 
@@ -116,6 +126,60 @@ MediaPlayer.OnCompletionListener {
 	public void onPrepared(MediaPlayer mp) {
 		//start playback
 		mp.start();
+        Intent notIntent = new Intent(this, MainActivity.class);
+        notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendIntent = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification.Builder builder = new Notification.Builder(this);
+        builder.setContentIntent(pendIntent)
+                .setSmallIcon(R.drawable.ic_launcher)
+                .setTicker(bookTitle)
+                .setOngoing(true)
+                .setContentTitle("Playing")
+                .setContentText(bookTitle);
+        Notification not = builder.build();
+
+        startForeground(NOTIFY_ID, not);
 	}
 
+    public int getPosn(){
+        return player.getCurrentPosition();
+    }
+
+    public int getDur(){
+        return player.getDuration();
+    }
+
+    public boolean isPng(){
+        return player.isPlaying();
+    }
+
+    public void pausePlayer(){
+        player.pause();
+    }
+
+    public void seek(int posn){
+        player.seekTo(posn);
+    }
+
+    public void go(){
+        player.start();
+    }
+
+    public void playPrev(){
+        bookPosn--;
+        if(bookPosn<0) bookPosn=books.size()-1;
+        playBook();
+    }
+
+    public void playNext(){
+        bookPosn++;
+        if(bookPosn>books.size()) bookPosn=0;
+        playBook();
+    }
+
+    @Override
+    public void onDestroy() {
+        stopForeground(true);
+    }
 }
