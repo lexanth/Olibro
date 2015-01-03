@@ -6,10 +6,10 @@
 	android:background="#ff1e408d"
 	tools:context=".MainActivity" >
 
-	<!-- book list -->
+	<!-- track list -->
 
 	<ListView
-		android:id="@+id/book_list"
+		android:id="@+id/track_list"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content" >
 	</ListView>

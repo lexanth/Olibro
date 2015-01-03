@@ -22,14 +22,14 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 
 	//media player
 	private MediaPlayer player;
-	//book list
-	private ArrayList<Book> books;
+	//track list
+	private ArrayList<Track> tracks;
 	//current position
-	private int bookPosn;
+	private int trackPosn;
 	//binder
-	private final IBinder bookBind = new MusicBinder();
-    // book title
-    private String bookTitle="";
+	private final IBinder trackBind = new MusicBinder();
+    // track title
+    private String trackTitle="";
     // Notification ID
     private static final int NOTIFY_ID=1;
 
@@ -37,7 +37,7 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 		//create the service
 		super.onCreate();
 		//initialize position
-		bookPosn=0;
+		trackPosn=0;
 		//create player
 		player = new MediaPlayer();
 		//initialize
@@ -56,9 +56,9 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 		player.setOnErrorListener(this);
 	}
 
-	//pass book list
-	public void setList(ArrayList<Book> theBooks){
-		books = theBooks;
+	//pass track list
+	public void setList(ArrayList<Track> theTracks){
+		tracks = theTracks;
 	}
 
     @Override
@@ -101,7 +101,7 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 	//activity will bind to service
 	@Override
 	public IBinder onBind(Intent intent) {
-		return bookBind;
+		return trackBind;
 	}
 
 	//release resources when unbind
@@ -112,19 +112,19 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 		return false;
 	}
 
-	//play a book
-	public void playBook(){
+	//play a track
+	public void playTrack(){
 		//play
 		player.reset();
-		//get book
-		Book playBook = books.get(bookPosn);
-        bookTitle = playBook.getTitle();
+		//get track
+		Track playTrack = tracks.get(trackPosn);
+        trackTitle = playTrack.getTitle();
 		//get id
-		long currBook = playBook.getID();
+		long currTrack = playTrack.getID();
 		//set uri
 		Uri trackUri = ContentUris.withAppendedId(
 				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				currBook);
+				currTrack);
 		//set the data source
 		try{ 
 			player.setDataSource(getApplicationContext(), trackUri);
@@ -135,9 +135,9 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 		player.prepareAsync(); 
 	}
 
-	//set the book
-	public void setBook(int bookIndex){
-		bookPosn=bookIndex;
+	//set the track
+	public void setTrack(int trackIndex){
+		trackPosn=trackIndex;
 	}
 
 	@Override
@@ -165,10 +165,10 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
         Notification.Builder builder = new Notification.Builder(this);
         builder.setContentIntent(pendIntent)
                 .setSmallIcon(R.drawable.ic_launcher)
-                .setTicker(bookTitle)
+                .setTicker(trackTitle)
                 .setOngoing(true)
                 .setContentTitle("Playing")
-                .setContentText(bookTitle);
+                .setContentText(trackTitle);
         Notification not = builder.build();
 
         startForeground(NOTIFY_ID, not);
@@ -199,15 +199,15 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
     }
 
     public void playPrev(){
-        bookPosn--;
-        if(bookPosn<0) bookPosn=books.size()-1;
-        playBook();
+        trackPosn--;
+        if(trackPosn<0) trackPosn= tracks.size()-1;
+        playTrack();
     }
 
     public void playNext(){
-        bookPosn++;
-        if(bookPosn>books.size()) bookPosn=0;
-        playBook();
+        trackPosn++;
+        if(trackPosn> tracks.size()) trackPosn=0;
+        playTrack();
     }
 
     @Override

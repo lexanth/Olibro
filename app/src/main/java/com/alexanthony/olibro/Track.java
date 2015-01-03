@@ -1,15 +1,15 @@
 package com.alexanthony.olibro;
 
-public class Book {
+public class Track {
 	
 	private long id;
 	private String title;
 	private String author;
 	
-	public Book(long bookID, String bookTitle, String bookAuthor){
-		id = bookID;
-		title = bookTitle;
-		author = bookAuthor;
+	public Track(long trackID, String trackTitle, String trackAuthor){
+		id = trackID;
+		title = trackTitle;
+		author = trackAuthor;
 	}
 	
 	public long getID(){return id;}

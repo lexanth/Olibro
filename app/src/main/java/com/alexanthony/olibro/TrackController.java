@@ -3,9 +3,9 @@ package com.alexanthony.olibro;
 import android.widget.MediaController;
 import android.content.Context;
 
-public class BookController extends MediaController {
+public class TrackController extends MediaController {
 
-    public BookController(Context c) {
+    public TrackController(Context c) {
         super(c);
     }
 

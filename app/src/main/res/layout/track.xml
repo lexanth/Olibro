@@ -2,12 +2,12 @@
 	xmlns:tools="http://schemas.android.com/tools"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
-	android:onClick="bookPicked"
+	android:onClick="trackPicked"
 	android:orientation="vertical"
 	android:padding="5dp" >
 
 	<TextView
-		android:id="@+id/book_title"
+		android:id="@+id/track_title"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:textColor="#FFFFFF"
@@ -15,7 +15,7 @@
 		android:textStyle="bold" />
 
 	<TextView
-		android:id="@+id/book_author"
+		android:id="@+id/track_author"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:textColor="#FFFFFF"

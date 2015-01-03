@@ -24,15 +24,15 @@ import android.widget.MediaController.MediaPlayerControl;
 
 public class MainActivity extends Activity implements MediaPlayerControl {
 
-	//book list variables
-	private ArrayList<Book> bookList;
-	private ListView bookView;
-    private BookController controller;
+	//track list variables
+	private ArrayList<Track> trackList;
+	private ListView trackView;
+    private TrackController controller;
     //service
     private PlayerService playerSrv;
     private Intent playIntent;
     //binding
-    private boolean bookBound=false;
+    private boolean trackBound=false;
     private boolean paused=false, playbackPaused=false;
 
     @Override
@@ -48,14 +48,14 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
     @Override
     public int getDuration() {
-        if (playerSrv != null && bookBound && playerSrv.isPng())
+        if (playerSrv != null && trackBound && playerSrv.isPng())
             return playerSrv.getDur();
         return 0;
     }
 
     @Override
     public int getCurrentPosition() {
-        if (playerSrv != null && bookBound && playerSrv.isPng())
+        if (playerSrv != null && trackBound && playerSrv.isPng())
             return playerSrv.getPosn();
         return 0;
     }
@@ -67,8 +67,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
     @Override
     public boolean isPlaying() {
-        return playerSrv != null && bookBound && playerSrv.isPng();
-//        if (playerSrv != null && bookBound)
+        return playerSrv != null && trackBound && playerSrv.isPng();
+//        if (playerSrv != null && trackBound)
 //            return playerSrv.isPng();
 //        return false;
     }
@@ -104,20 +104,20 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		setContentView(R.layout.activity_main);
 
 		//retrieve list view
-		bookView = (ListView)findViewById(R.id.book_list);
+		trackView = (ListView)findViewById(R.id.track_list);
 		//instantiate list
-		bookList = new ArrayList<Book>();
+		trackList = new ArrayList<Track>();
 		//get songs from device
-		getBookList();
+		getTrackList();
 		//sort alphabetically by title
-		Collections.sort(bookList, new Comparator<Book>(){
-			public int compare(Book a, Book b){
+		Collections.sort(trackList, new Comparator<Track>(){
+			public int compare(Track a, Track b){
 				return a.getTitle().compareTo(b.getTitle());
 			}
 		});
 		//create and set adapter
-		BookAdapter bookAdt = new BookAdapter(this, bookList);
-		bookView.setAdapter(bookAdt);
+		TrackAdapter trackAdt = new TrackAdapter(this, trackList);
+		trackView.setAdapter(trackAdt);
         // set up controller
         setController();
 	}
@@ -131,13 +131,13 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 			//get service
 			playerSrv = binder.getService();
 			//pass list
-			playerSrv.setList(bookList);
-			bookBound = true;
+			playerSrv.setList(trackList);
+			trackBound = true;
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName name) {
-			bookBound = false;
+			trackBound = false;
 		}
 	};
 
@@ -152,10 +152,10 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		}
 	}
 
-	//user book select
-	public void bookPicked(View view){
-		playerSrv.setBook(Integer.parseInt(view.getTag().toString()));
-		playerSrv.playBook();
+	//user track select
+	public void trackPicked(View view){
+		playerSrv.setTrack(Integer.parseInt(view.getTag().toString()));
+		playerSrv.playTrack();
         if (playbackPaused) {
             setController();
             playbackPaused = false;
@@ -183,8 +183,8 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		return super.onOptionsItemSelected(item);
 	}
 
-	//method to retrieve book info from device
-	public void getBookList(){
+	//method to retrieve track info from device
+	public void getTrackList(){
 		//query external audio
 		ContentResolver mediaResolver = getContentResolver();
 		Uri mediaUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
@@ -203,7 +203,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 				long thisId = mediaCursor.getLong(idColumn);
 				String thisTitle = mediaCursor.getString(titleColumn);
 				String thisAuthor = mediaCursor.getString(authorColumn);
-				bookList.add(new Book(thisId, thisTitle, thisAuthor));
+				trackList.add(new Track(thisId, thisTitle, thisAuthor));
 			} 
 			while (mediaCursor.moveToNext());
 		}
@@ -217,7 +217,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 	}
 
     private void setController() {
-        controller = new BookController(this);
+        controller = new TrackController(this);
         // Set up prev and next handlers
         controller.setPrevNextListeners(new View.OnClickListener() {
             @Override
@@ -232,7 +232,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
         });
         // Attach the controller to this activity
         controller.setMediaPlayer(this);
-        controller.setAnchorView(findViewById(R.id.book_list));
+        controller.setAnchorView(findViewById(R.id.track_list));
         controller.setEnabled(true);
     }
 
