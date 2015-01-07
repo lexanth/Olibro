@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:showIn="@layout/activity_main"
+    android:animationCache="true"
+    android:background="@color/olibro_purple">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="60dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/current_track_art_image_small"
+            android:contentDescription="currentTrackArt"
+            android:src="@drawable/ic_art_placeholder_small"
+            android:padding="2dp"
+            android:maxHeight="60dp"
+            android:maxWidth="60dp"
+            android:minHeight="60dp"
+            android:minWidth="60dp"
+            android:nestedScrollingEnabled="false" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="1"
+            android:paddingLeft="2dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/track_name_text_view"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:id="@+id/track_author_text_view"
+                android:layout_weight="1" />
+        </LinearLayout>
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/play_pause_button"
+            android:src="@android:drawable/ic_media_pause"
+            android:contentDescription="Play Pause Button"
+            style="@style/AppTheme"
+            android:nestedScrollingEnabled="false"
+            android:padding="2dp"
+            android:onClick="onPlayPauseClick"
+            android:background="@android:color/transparent"
+            android:maxHeight="60dp"
+            android:maxWidth="60dp"
+            android:minHeight="60dp"
+            android:minWidth="60dp" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/current_track_art_image_view_large"
+        android:layout_weight="1"
+        android:src="@drawable/ic_art_placeholder"
+        android:background="@android:color/background_light"
+        android:theme="@style/LightBackDarkText" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/LightBackDarkText">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:id="@+id/elapsed_time_text_view"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:theme="@style/LightBackDarkText" />
+
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/seek_bar"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:id="@+id/duration_text_view"
+            android:layout_gravity="center"
+            android:padding="2dp"
+            android:theme="@style/LightBackDarkText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:theme="@style/LightBackDarkText">
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/prev_button"
+            android:src="@drawable/ic_action_av_skip_previous"
+            android:onClick="onPrevClick"
+            android:background="@android:color/transparent"
+            android:minHeight="68dp"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/back_button"
+            android:src="@drawable/ic_action_av_fast_rewind"
+            android:onClick="onBackClick"
+            android:background="@android:color/transparent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/play_pause_button_2"
+            android:src="@android:drawable/ic_media_play"
+            android:onClick="onPlayPauseClick"
+            android:background="@android:color/transparent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/forward_button"
+            android:src="@drawable/ic_action_av_fast_forward"
+            android:onClick="onForwardClick"
+            android:background="@android:color/transparent"
+            android:layout_weight="1" />
+
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/next_button"
+            android:src="@drawable/ic_action_av_skip_next"
+            android:onClick="onNextClick"
+            android:background="@android:color/transparent"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</LinearLayout>

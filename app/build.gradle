@@ -18,4 +18,8 @@ android {
 }
 
 dependencies {
+    repositories {
+        mavenCentral()
+    }
+    compile 'com.sothree.slidinguppanel:library:+'
 }

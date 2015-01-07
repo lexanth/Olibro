@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import com.alexanthony.olibro.PlayerService.MusicBinder;
+import com.alexanthony.olibro.PlayerService.MediaBinder;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,13 +17,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.MediaController.MediaPlayerControl;
+import android.widget.SeekBar;
+import android.widget.TextView;
+import android.os.AsyncTask;
 
-public class MainActivity extends Activity implements MediaPlayerControl {
+public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener{
 
 	//track list variables
 	private ArrayList<Track> trackList;
@@ -34,68 +40,76 @@ public class MainActivity extends Activity implements MediaPlayerControl {
     //binding
     private boolean trackBound=false;
     private boolean paused=false, playbackPaused=false;
+    private String bookPath="Audiobooks";
+    private SlidingUpPanelLayout sliding_layout;
+    private static final String TAG = "MainActivity";
+    private SeekBar mSeekBar;
 
-    @Override
-    public void start() {
-        playerSrv.go();
+    public class SeekBarHandler extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPostExecute(Void result) {
+            Log.d("##########Seek Bar Handler ################","###################Destroyed##################");
+            super.onPostExecute(result);
+        }
+
+        @Override
+        protected Void doInBackground(Void... arg0) {
+            while(isPlaying() && sliding_layout.isPanelExpanded()) {
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setProgressControls();
+                    }
+                    
+                });
+            }
+            return null;
+        }
+
     }
 
-    @Override
+    public void start() {
+        playerSrv.go();
+        new SeekBarHandler().execute();
+        // TODO: Update media player
+        setMediaControl();
+        ;
+    }
+
     public void pause() {
         playerSrv.pausePlayer();
         playbackPaused = true;
     }
 
-    @Override
     public int getDuration() {
         if (playerSrv != null && trackBound && playerSrv.isPng())
             return playerSrv.getDur();
         return 0;
     }
 
-    @Override
     public int getCurrentPosition() {
         if (playerSrv != null && trackBound && playerSrv.isPng())
             return playerSrv.getPosn();
         return 0;
     }
 
-    @Override
     public void seekTo(int pos) {
         playerSrv.seek(pos);
     }
 
-    @Override
     public boolean isPlaying() {
         return playerSrv != null && trackBound && playerSrv.isPng();
 //        if (playerSrv != null && trackBound)
 //            return playerSrv.isPng();
 //        return false;
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return 0;
-    }
-
-    @Override
-    public boolean canPause() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekBackward() {
-        return true;
-    }
-
-    @Override
-    public boolean canSeekForward() {
-        return true;
-    }
-
-    @Override
-    public int getAudioSessionId() {
-        return 0;
     }
 
 	@Override
@@ -119,7 +133,7 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		TrackAdapter trackAdt = new TrackAdapter(this, trackList);
 		trackView.setAdapter(trackAdt);
         // set up controller
-        setController();
+        setUpSlidingLayout();
 	}
 
 	//connect to the service
@@ -127,12 +141,14 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 
 		@Override
 		public void onServiceConnected(ComponentName name, IBinder service) {
-			MusicBinder binder = (MusicBinder)service;
+			MediaBinder binder = (MediaBinder)service;
 			//get service
 			playerSrv = binder.getService();
 			//pass list
 			playerSrv.setList(trackList);
 			trackBound = true;
+            // TODO: If last playing track from previous run available, load it and setMediaControl()
+            //setMediaControl();
 		}
 
 		@Override
@@ -157,10 +173,11 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		playerSrv.setTrack(Integer.parseInt(view.getTag().toString()));
 		playerSrv.playTrack();
         if (playbackPaused) {
-            setController();
             playbackPaused = false;
+            //TODO Set up my media control
         }
-        controller.show(0);
+        setMediaControl();
+        new SeekBarHandler().execute();
 	}
 
 	@Override
@@ -188,8 +205,16 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		//query external audio
 		ContentResolver mediaResolver = getContentResolver();
 		Uri mediaUri = android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-		Cursor mediaCursor = mediaResolver.query(mediaUri, null, null, null, null);
+        String selection = MediaStore.Audio.Media.DATA + " like " + "'%" + bookPath + "/%'";
+		Cursor mediaCursor = mediaResolver.query(mediaUri, null, selection, null, null);
 		//iterate over results if valid
+        if (mediaCursor == null) {
+            // Handle error
+            Log.e("MainActivity", "MainActivity.getTrackList - null cursor");
+        }
+        if (mediaCursor.getCount() < 1) {
+            // No media
+        }
 		if(mediaCursor!=null && mediaCursor.moveToFirst()){
 			//get columns
 			int titleColumn = mediaCursor.getColumnIndex
@@ -216,60 +241,148 @@ public class MainActivity extends Activity implements MediaPlayerControl {
 		super.onDestroy();
 	}
 
-    private void setController() {
-        controller = new TrackController(this);
-        // Set up prev and next handlers
-        controller.setPrevNextListeners(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playNext();
-            }
-        }, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playPrev();
-            }
-        });
-        // Attach the controller to this activity
-        controller.setMediaPlayer(this);
-        controller.setAnchorView(findViewById(R.id.track_list));
-        controller.setEnabled(true);
-    }
-
     private void playNext() {
         playerSrv.playNext();
         if (playbackPaused) {
-            setController();
+            //TODO: Update media player
             playbackPaused = false;
+            setMediaControl();
+            new SeekBarHandler().execute();
         }
-        controller.show(0);
     }
 
     private void playPrev() {
         playerSrv.playPrev();
         if (playbackPaused) {
-            setController();
+            // TODO: Update media player
             playbackPaused = false;
+            setMediaControl();
+            new SeekBarHandler().execute();
         }
-        controller.show(0);
     }
+    
+    private void resume() {
+        start();
+    }
+    
+    public void setUpSlidingLayout() {
+        sliding_layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        sliding_layout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+            }
 
-    protected void onResume() {
-        super.onResume();
+            @Override
+            public void onPanelCollapsed(View view) {
+                findViewById(R.id.current_track_art_image_small).setVisibility(View.VISIBLE);
+                findViewById(R.id.play_pause_button).setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onPanelExpanded(View panel) {
+                findViewById(R.id.current_track_art_image_small).setVisibility(View.GONE);
+                findViewById(R.id.play_pause_button).setVisibility(View.GONE);
+                new SeekBarHandler().execute();
+            }
+
+            @Override
+            public void onPanelAnchored(View view) {
+            }
+
+            @Override
+            public void onPanelHidden(View panel) {
+            }
+        });
+        mSeekBar = (SeekBar)findViewById(R.id.seek_bar);
+        mSeekBar.setOnSeekBarChangeListener(this);
+    }
+    
+    public void onPlayPauseClick(View view) {
         if (paused) {
-            setController();
+            resume();
             paused = false;
+        } else {
+            pause();
+            paused = true;
+        }
+        setPlayPauseButtons(!paused);
+    }
+    
+    public void onPrevClick(View view) {
+        playPrev();
+    }
+    
+    public void onNextClick(View view) {
+        playNext();
+    }
+    
+    public void onBackClick(View view) {
+        //
+        
+    }
+    
+    public void onForwardClick(View view) {
+        //
+        
+    }
+    
+    private void setPlayPauseButtons(boolean playing) {
+        Log.i(TAG, "setPlayPauseButtons " + playing);
+        if (playing) {
+//            int id = getResources().getIdentifier("ic_media_pause", "drawable", getPackageName());
+            //((ImageView)findViewById(R.id.play_pause_button)).setImageResource(id);
+            ((ImageView)findViewById(R.id.play_pause_button)).setImageResource(android.R.drawable.ic_media_pause);
+            ((ImageView)findViewById(R.id.play_pause_button_2)).setImageResource(android.R.drawable.ic_media_pause);
+            //((ImageView)findViewById(R.id.play_pause_button_2)).setImageResource(id);
+        } else {
+//            int id = getResources().getIdentifier("ic_media_play", "drawable", getPackageName());
+//            ((ImageView) findViewById(R.id.play_pause_button)).setImageResource(id);
+//            ((ImageView) findViewById(R.id.play_pause_button_2)).setImageResource(id);
+            ((ImageView)findViewById(R.id.play_pause_button)).setImageResource(android.R.drawable.ic_media_play);
+            ((ImageView)findViewById(R.id.play_pause_button_2)).setImageResource(android.R.drawable.ic_media_play);
         }
     }
+    
+    private void setMediaControl() {
+        Log.i(TAG, "setMediaControl " + paused);
+        setPlayPauseButtons(!paused);
+        String title = playerSrv.getTrackTitle();
+        Log.i(TAG, "setMediaControl " + title);
+        String author = playerSrv.getTrackAuthor();
+        Log.i(TAG, "setMediaControl " + author);
+        ((TextView)findViewById(R.id.track_name_text_view)).setText(title);
+        ((TextView)findViewById(R.id.track_author_text_view)).setText(playerSrv.getTrackAuthor());
+        setProgressControls();
+    }
+    
+    public void setProgressControls() {
+        if (!paused) {
+            Log.i(TAG, "setProgressControls");
+            // TODO: Only do this if not already set
+            int dur = getDuration() / 1000;
+            mSeekBar.setMax(dur);
 
-    protected void onStop() {
-        controller.hide();
-        super.onStop();
+            ((TextView) findViewById(R.id.duration_text_view)).setText(String.format("%02d", dur / 60) + ":" + String.format("%02d", dur % 60));
+
+            int cur = getCurrentPosition() / 1000;
+            mSeekBar.setProgress(cur);
+            ((TextView) findViewById(R.id.elapsed_time_text_view)).setText(String.format("%02d", cur / 60) + ":" + String.format("%02d", cur % 60));
+        }
     }
 
     @Override
-    protected void onPause(){
-        super.onPause();
-        paused=true;
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        Log.i(TAG, "onProgressChanged " + progress + fromUser);
+        if (fromUser) {seekTo(progress*1000);}
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+
     }
 }

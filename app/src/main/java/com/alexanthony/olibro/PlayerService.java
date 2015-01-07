@@ -25,13 +25,29 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 	//track list
 	private ArrayList<Track> tracks;
 	//current position
-	private int trackPosn;
+	private int trackPosn=-1;
 	//binder
-	private final IBinder trackBind = new MusicBinder();
+	private final IBinder trackBind = new MediaBinder();
     // track title
     private String trackTitle="";
+    // track author
+    private String trackAuthor="";
     // Notification ID
     private static final int NOTIFY_ID=1;
+
+    private static final String TAG = "PlayerService";
+    
+    public String getTrackTitle() {
+        Log.i(TAG, "getTrackTitle " + trackTitle);
+        if (trackTitle != "") {
+            return trackTitle;
+        } else {
+            Log.i(TAG, "getTrackTitle " + tracks.get(trackPosn).getTitle());
+            return tracks.get(trackPosn).getTitle();
+        }
+    }
+    
+    public String getTrackAuthor() {return trackAuthor;}
 
 	public void onCreate(){
 		//create the service
@@ -92,7 +108,7 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
     }
 
     //binder
-	public class MusicBinder extends Binder {
+	public class MediaBinder extends Binder {
 		PlayerService getService() {
 			return PlayerService.this;
 		}
@@ -108,7 +124,7 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 	@Override
 	public boolean onUnbind(Intent intent){
 		player.stop();
-		player.release();
+		//player.release();
 		return false;
 	}
 
@@ -119,6 +135,8 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 		//get track
 		Track playTrack = tracks.get(trackPosn);
         trackTitle = playTrack.getTitle();
+        Log.i(TAG, "playTrack " + trackTitle);
+        trackAuthor = playTrack.getAuthor();
 		//get id
 		long currTrack = playTrack.getID();
 		//set uri
