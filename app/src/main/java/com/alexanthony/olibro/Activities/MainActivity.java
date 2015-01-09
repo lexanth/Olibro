@@ -1,4 +1,4 @@
-package com.alexanthony.olibro;
+package com.alexanthony.olibro.Activities;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -23,7 +23,10 @@ import android.widget.TextView;
 import android.widget.Toolbar;
 
 import com.alexanthony.olibro.Content.Track;
+import com.alexanthony.olibro.PlayerService;
 import com.alexanthony.olibro.PlayerService.MediaBinder;
+import com.alexanthony.olibro.R;
+import com.alexanthony.olibro.TrackAdapter;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;

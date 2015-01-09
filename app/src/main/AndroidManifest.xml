@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:theme="@style/MyAppTheme">
         <activity
-            android:name="com.alexanthony.olibro.MainActivity"
+            android:name=".Activities.MainActivity"
             android:label="@string/app_name"
             android:launchMode="singleTop"
             android:screenOrientation="portrait">

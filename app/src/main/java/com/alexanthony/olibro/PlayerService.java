@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
 
+import com.alexanthony.olibro.Activities.MainActivity;
 import com.alexanthony.olibro.Content.Track;
 
 import java.util.ArrayList;
@@ -111,9 +112,9 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 
     //binder
 	public class MediaBinder extends Binder {
-		PlayerService getService() {
-			return PlayerService.this;
-		}
+        public PlayerService getService() {
+            return PlayerService.this;
+        }
 	}
 
 	//activity will bind to service
