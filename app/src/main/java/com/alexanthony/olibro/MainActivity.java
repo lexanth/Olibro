@@ -1,15 +1,5 @@
 package com.alexanthony.olibro;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-
-import com.alexanthony.olibro.PlayerService.MediaBinder;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
-
-import android.net.Uri;
-import android.os.Bundle;
-import android.os.IBinder;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
@@ -17,23 +7,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.os.AsyncTask;
+import android.widget.Toolbar;
+
+import com.alexanthony.olibro.Content.Track;
+import com.alexanthony.olibro.PlayerService.MediaBinder;
+import com.sothree.slidinguppanel.SlidingUpPanelLayout;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener{
 
 	//track list variables
 	private ArrayList<Track> trackList;
 	private ListView trackView;
-    private TrackController controller;
     //service
     private PlayerService playerSrv;
     private Intent playIntent;
@@ -44,6 +45,9 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     private SlidingUpPanelLayout sliding_layout;
     private static final String TAG = "MainActivity";
     private SeekBar mSeekBar;
+    private Toolbar mToolBar;
+    private ImageButton playPauseButton1;
+    private ImageButton playPauseButton2;
 
     public class SeekBarHandler extends AsyncTask<Void, Void, Void> {
 
@@ -57,7 +61,7 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         protected Void doInBackground(Void... arg0) {
             while(isPlaying() && sliding_layout.isPanelExpanded()) {
                 try {
-                    Thread.sleep(200);
+                    Thread.sleep(250);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -81,7 +85,6 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         new SeekBarHandler().execute();
         // TODO: Update media player
         setMediaControl();
-        ;
     }
 
     public void pause() {
@@ -103,6 +106,8 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 
     public void seekTo(int pos) {
         playerSrv.seek(pos);
+        paused = false;
+        setMediaControl();
     }
 
     public boolean isPlaying() {
@@ -120,8 +125,8 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 		//retrieve list view
 		trackView = (ListView)findViewById(R.id.track_list);
 		//instantiate list
-		trackList = new ArrayList<Track>();
-		//get songs from device
+        trackList = new ArrayList<>();
+        //get songs from device
 		getTrackList();
 		//sort alphabetically by title
 		Collections.sort(trackList, new Comparator<Track>(){
@@ -134,7 +139,18 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 		trackView.setAdapter(trackAdt);
         // set up controller
         setUpSlidingLayout();
-	}
+        mToolBar = (Toolbar) findViewById(R.id.toolbar);
+        setActionBar(mToolBar);
+        playPauseButton1 = (ImageButton) findViewById(R.id.play_pause_button);
+        playPauseButton2 = (ImageButton) findViewById(R.id.play_pause_button_2);
+        View.OnClickListener playPauseListener = new View.OnClickListener() {
+            public void onClick(View view) {
+                onPlayPauseClick(view);
+            }
+        };
+        playPauseButton1.setOnClickListener(playPauseListener);
+        playPauseButton2.setOnClickListener(playPauseListener);
+    }
 
 	//connect to the service
 	private ServiceConnection playerConnection = new ServiceConnection(){
@@ -212,11 +228,8 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
             // Handle error
             Log.e("MainActivity", "MainActivity.getTrackList - null cursor");
         }
-        if (mediaCursor.getCount() < 1) {
-            // No media
-        }
-		if(mediaCursor!=null && mediaCursor.moveToFirst()){
-			//get columns
+        if (mediaCursor.moveToFirst()) {
+            //get columns
 			int titleColumn = mediaCursor.getColumnIndex
 					(android.provider.MediaStore.Audio.Media.TITLE);
 			int idColumn = mediaCursor.getColumnIndex
@@ -275,13 +288,13 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
             @Override
             public void onPanelCollapsed(View view) {
                 findViewById(R.id.current_track_art_image_small).setVisibility(View.VISIBLE);
-                findViewById(R.id.play_pause_button).setVisibility(View.VISIBLE);
+                playPauseButton1.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onPanelExpanded(View panel) {
                 findViewById(R.id.current_track_art_image_small).setVisibility(View.GONE);
-                findViewById(R.id.play_pause_button).setVisibility(View.GONE);
+                playPauseButton1.setVisibility(View.GONE);
                 new SeekBarHandler().execute();
             }
 
@@ -318,28 +331,31 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     
     public void onBackClick(View view) {
         //
-        
+        int progress = getCurrentPosition();
+        seekTo(progress - 5000);
     }
     
     public void onForwardClick(View view) {
         //
-        
+        int progress = getCurrentPosition();
+        seekTo(progress - 5000);
     }
     
     private void setPlayPauseButtons(boolean playing) {
         Log.i(TAG, "setPlayPauseButtons " + playing);
+        // Dark and light are the colours of the backgrounds, not the images
         if (playing) {
 //            int id = getResources().getIdentifier("ic_media_pause", "drawable", getPackageName());
             //((ImageView)findViewById(R.id.play_pause_button)).setImageResource(id);
-            ((ImageView)findViewById(R.id.play_pause_button)).setImageResource(android.R.drawable.ic_media_pause);
-            ((ImageView)findViewById(R.id.play_pause_button_2)).setImageResource(android.R.drawable.ic_media_pause);
+            playPauseButton1.setImageResource(R.drawable.ic_action_av_pause_dark);
+            playPauseButton2.setImageResource(R.drawable.ic_action_av_pause_light);
             //((ImageView)findViewById(R.id.play_pause_button_2)).setImageResource(id);
         } else {
 //            int id = getResources().getIdentifier("ic_media_play", "drawable", getPackageName());
 //            ((ImageView) findViewById(R.id.play_pause_button)).setImageResource(id);
 //            ((ImageView) findViewById(R.id.play_pause_button_2)).setImageResource(id);
-            ((ImageView)findViewById(R.id.play_pause_button)).setImageResource(android.R.drawable.ic_media_play);
-            ((ImageView)findViewById(R.id.play_pause_button_2)).setImageResource(android.R.drawable.ic_media_play);
+            playPauseButton1.setImageResource(R.drawable.ic_action_av_play_arrow_dark);
+            playPauseButton2.setImageResource(R.drawable.ic_action_av_play_arrow_light);
         }
     }
     
@@ -373,7 +389,11 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         Log.i(TAG, "onProgressChanged " + progress + fromUser);
-        if (fromUser) {seekTo(progress*1000);}
+        if (fromUser) {
+            playerSrv.seek(progress * 1000);
+            paused = false;
+            setPlayPauseButtons(true);
+        }
     }
 
     @Override

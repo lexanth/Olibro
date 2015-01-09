@@ -1,29 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="AppTheme" parent="@android:style/Theme.Material">
+
+    <style name="MyAppTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
         <item name="android:colorPrimary">@color/olibro_purple</item>
         <item name="android:colorPrimaryDark">@color/olibro_purple_dark</item>
-        <item name="android:actionBarStyle">@style/AppTheme.ActionBar</item>
+        <item name="android:textColorPrimary">#ffffff</item>
+        <!--<item name="android:actionBarStyle">@style/MyAppTheme.ActionBar</item>-->
     </style>
 
     <!-- ActionBar styles -->
-    <style name="AppTheme.ActionBar"
-        parent="AppTheme">
-        <item name="android:elevation">0dp</item>
-        <item name="android:colorPrimary">@color/olibro_purple</item>
-        <item name="android:colorPrimaryDark">@color/olibro_purple_dark</item>
-        <item name="android:background">@color/olibro_purple</item>
-        <item name="android:textColor">@android:color/primary_text_light</item>
-        <item name="android:titleTextStyle">@style/AppTheme.ActionBar.TitleTextStyle</item>
+    <style name="MyAppTheme.ActionBar" parent="@android:style/Theme.Material.NoActionBar">
+
+    </style>
+    <!--<item name="android:colorPrimary">@color/olibro_purple</item>
+    <item name="android:elevation">0dp</item>
+    <item name="android:elevation">0.1dp</item>-->
+    <!--<item name="android:colorPrimary">@color/olibro_purple</item>
+    <item name="android:colorPrimaryDark">@color/olibro_purple_dark</item>
+    <item name="android:textColorPrimary">#ffffff</item>
+    <item name="android:background">@color/olibro_purple</item>
+    <item name="android:textColor">#ffffff</item>
+    <item name="android:foreground">#ffffff</item>
+    <item name="android:titleTextStyle">@style/MyAppTheme.ActionBar.TitleTextStyle</item>
+</style>-->
+
+    <style name="MyAppTheme.SlidingLayout" parent="MyAppTheme">
+        <!--<item name="android:elevation">4dp</item>-->
     </style>
 
-    <style name="AppTheme.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
-        <item name="android:textColor">@android:color/primary_text_light</item>
-    </style>
+    <!--<style name="MyAppTheme.ActionBar.TitleTextStyle" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:foreground">#ffffff</item>
+        <item name="android:elevation">4dp</item>
+    </style>-->
 
-    <style name="LightBackDarkText"
-        parent="@android:style/Theme.Material">
-        <item name="android:textColor">@android:color/primary_text_dark</item>
+    <style name="LightBackDarkText" parent="@android:style/Theme.Material">
+        <item name="android:textColor">@android:color/primary_text_light</item>
         <item name="android:background">@android:color/background_light</item>
     </style>
 </resources>

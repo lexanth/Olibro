@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_main"
     android:animationCache="true"
@@ -51,12 +52,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/play_pause_button"
-            android:src="@android:drawable/ic_media_pause"
+            android:src="@drawable/ic_action_av_play_arrow_dark"
             android:contentDescription="Play Pause Button"
-            style="@style/AppTheme"
+            android:theme="@style/MyAppTheme"
             android:nestedScrollingEnabled="false"
             android:padding="2dp"
-            android:onClick="onPlayPauseClick"
             android:background="@android:color/transparent"
             android:maxHeight="60dp"
             android:maxWidth="60dp"
@@ -94,6 +94,8 @@
             android:layout_height="wrap_content"
             android:id="@+id/seek_bar"
             android:layout_gravity="center_horizontal"
+            android:progressDrawable="@drawable/seekbar"
+            android:maxHeight="2dp"
             android:layout_weight="1" />
 
         <TextView
@@ -137,8 +139,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/play_pause_button_2"
-            android:src="@android:drawable/ic_media_play"
-            android:onClick="onPlayPauseClick"
+            android:src="@drawable/ic_action_av_play_arrow_light"
             android:background="@android:color/transparent"
             android:layout_weight="1" />
 

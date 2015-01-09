@@ -1,9 +1,10 @@
 package com.alexanthony.olibro;
 
-import java.util.ArrayList;
-
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -12,9 +13,10 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
-import android.app.Notification;
-import android.app.PendingIntent;
-import android.content.Context;
+
+import com.alexanthony.olibro.Content.Track;
+
+import java.util.ArrayList;
 
 public class PlayerService extends Service implements
 MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
@@ -39,7 +41,7 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
     
     public String getTrackTitle() {
         Log.i(TAG, "getTrackTitle " + trackTitle);
-        if (trackTitle != "") {
+        if (trackTitle.equals("")) {
             return trackTitle;
         } else {
             Log.i(TAG, "getTrackTitle " + tracks.get(trackPosn).getTitle());
