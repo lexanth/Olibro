@@ -1,6 +1,5 @@
 package com.alexanthony.olibro.Activities;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -8,7 +7,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.MediaStore;
@@ -16,109 +14,25 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.SeekBar;
-import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.alexanthony.olibro.Content.Track;
 import com.alexanthony.olibro.PlayerService;
 import com.alexanthony.olibro.PlayerService.MediaBinder;
 import com.alexanthony.olibro.R;
 import com.alexanthony.olibro.TrackAdapter;
-import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeListener{
-
-	//track list variables
-	private ArrayList<Track> trackList;
-	private ListView trackView;
-    //service
-    private PlayerService playerSrv;
-    private Intent playIntent;
-    //binding
-    private boolean trackBound=false;
-    private boolean paused=false, playbackPaused=false;
+public class MainActivity extends BaseActivity {
+    //track list variables
+    private ArrayList<Track> trackList;
+    private ListView trackView;
     private String bookPath="Audiobooks";
-    private SlidingUpPanelLayout sliding_layout;
-    private static final String TAG = "MainActivity";
-    private SeekBar mSeekBar;
-    private Toolbar mToolBar;
-    private ImageButton playPauseButton1;
-    private ImageButton playPauseButton2;
 
-    public class SeekBarHandler extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected void onPostExecute(Void result) {
-            Log.d("##########Seek Bar Handler ################","###################Destroyed##################");
-            super.onPostExecute(result);
-        }
-
-        @Override
-        protected Void doInBackground(Void... arg0) {
-            while(isPlaying() && sliding_layout.isPanelExpanded()) {
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        setProgressControls();
-                    }
-                    
-                });
-            }
-            return null;
-        }
-
-    }
-
-    public void start() {
-        playerSrv.go();
-        new SeekBarHandler().execute();
-        // TODO: Update media player
-        setMediaControl();
-    }
-
-    public void pause() {
-        playerSrv.pausePlayer();
-        playbackPaused = true;
-    }
-
-    public int getDuration() {
-        if (playerSrv != null && trackBound && playerSrv.isPng())
-            return playerSrv.getDur();
-        return 0;
-    }
-
-    public int getCurrentPosition() {
-        if (playerSrv != null && trackBound && playerSrv.isPng())
-            return playerSrv.getPosn();
-        return 0;
-    }
-
-    public void seekTo(int pos) {
-        playerSrv.seek(pos);
-        paused = false;
-        setMediaControl();
-    }
-
-    public boolean isPlaying() {
-        return playerSrv != null && trackBound && playerSrv.isPng();
-//        if (playerSrv != null && trackBound)
-//            return playerSrv.isPng();
-//        return false;
-    }
+    private static final String TAG = "com.alexanthony.olibro.MainActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -140,19 +54,6 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 		//create and set adapter
 		TrackAdapter trackAdt = new TrackAdapter(this, trackList);
 		trackView.setAdapter(trackAdt);
-        // set up controller
-        setUpSlidingLayout();
-        mToolBar = (Toolbar) findViewById(R.id.toolbar);
-        setActionBar(mToolBar);
-        playPauseButton1 = (ImageButton) findViewById(R.id.play_pause_button);
-        playPauseButton2 = (ImageButton) findViewById(R.id.play_pause_button_2);
-        View.OnClickListener playPauseListener = new View.OnClickListener() {
-            public void onClick(View view) {
-                onPlayPauseClick(view);
-            }
-        };
-        playPauseButton1.setOnClickListener(playPauseListener);
-        playPauseButton2.setOnClickListener(playPauseListener);
     }
 
 	//connect to the service
@@ -193,10 +94,8 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 		playerSrv.playTrack();
         if (playbackPaused) {
             playbackPaused = false;
-            //TODO Set up my media control
         }
         setMediaControl();
-        new SeekBarHandler().execute();
 	}
 
 	@Override
@@ -257,155 +156,4 @@ public class MainActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 		super.onDestroy();
 	}
 
-    private void playNext() {
-        playerSrv.playNext();
-        if (playbackPaused) {
-            //TODO: Update media player
-            playbackPaused = false;
-            setMediaControl();
-            new SeekBarHandler().execute();
-        }
-    }
-
-    private void playPrev() {
-        playerSrv.playPrev();
-        if (playbackPaused) {
-            // TODO: Update media player
-            playbackPaused = false;
-            setMediaControl();
-            new SeekBarHandler().execute();
-        }
-    }
-    
-    private void resume() {
-        start();
-    }
-    
-    public void setUpSlidingLayout() {
-        sliding_layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        sliding_layout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-            }
-
-            @Override
-            public void onPanelCollapsed(View view) {
-                findViewById(R.id.current_track_art_image_small).setVisibility(View.VISIBLE);
-                playPauseButton1.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onPanelExpanded(View panel) {
-                findViewById(R.id.current_track_art_image_small).setVisibility(View.GONE);
-                playPauseButton1.setVisibility(View.GONE);
-                new SeekBarHandler().execute();
-            }
-
-            @Override
-            public void onPanelAnchored(View view) {
-            }
-
-            @Override
-            public void onPanelHidden(View panel) {
-            }
-        });
-        mSeekBar = (SeekBar)findViewById(R.id.seek_bar);
-        mSeekBar.setOnSeekBarChangeListener(this);
-    }
-    
-    public void onPlayPauseClick(View view) {
-        if (paused) {
-            resume();
-            paused = false;
-        } else {
-            pause();
-            paused = true;
-        }
-        setPlayPauseButtons(!paused);
-    }
-    
-    public void onPrevClick(View view) {
-        playPrev();
-    }
-    
-    public void onNextClick(View view) {
-        playNext();
-    }
-    
-    public void onBackClick(View view) {
-        //
-        int progress = getCurrentPosition();
-        seekTo(progress - 5000);
-    }
-    
-    public void onForwardClick(View view) {
-        //
-        int progress = getCurrentPosition();
-        seekTo(progress - 5000);
-    }
-    
-    private void setPlayPauseButtons(boolean playing) {
-        Log.i(TAG, "setPlayPauseButtons " + playing);
-        // Dark and light are the colours of the backgrounds, not the images
-        if (playing) {
-//            int id = getResources().getIdentifier("ic_media_pause", "drawable", getPackageName());
-            //((ImageView)findViewById(R.id.play_pause_button)).setImageResource(id);
-            playPauseButton1.setImageResource(R.drawable.ic_action_av_pause_dark);
-            playPauseButton2.setImageResource(R.drawable.ic_action_av_pause_light);
-            //((ImageView)findViewById(R.id.play_pause_button_2)).setImageResource(id);
-        } else {
-//            int id = getResources().getIdentifier("ic_media_play", "drawable", getPackageName());
-//            ((ImageView) findViewById(R.id.play_pause_button)).setImageResource(id);
-//            ((ImageView) findViewById(R.id.play_pause_button_2)).setImageResource(id);
-            playPauseButton1.setImageResource(R.drawable.ic_action_av_play_arrow_dark);
-            playPauseButton2.setImageResource(R.drawable.ic_action_av_play_arrow_light);
-        }
-    }
-    
-    private void setMediaControl() {
-        Log.i(TAG, "setMediaControl " + paused);
-        setPlayPauseButtons(!paused);
-        String title = playerSrv.getTrackTitle();
-        Log.i(TAG, "setMediaControl " + title);
-        String author = playerSrv.getTrackAuthor();
-        Log.i(TAG, "setMediaControl " + author);
-        ((TextView)findViewById(R.id.track_name_text_view)).setText(title);
-        ((TextView)findViewById(R.id.track_author_text_view)).setText(playerSrv.getTrackAuthor());
-        setProgressControls();
-    }
-    
-    public void setProgressControls() {
-        if (!paused) {
-            Log.i(TAG, "setProgressControls");
-            // TODO: Only do this if not already set
-            int dur = getDuration() / 1000;
-            mSeekBar.setMax(dur);
-
-            ((TextView) findViewById(R.id.duration_text_view)).setText(String.format("%02d", dur / 60) + ":" + String.format("%02d", dur % 60));
-
-            int cur = getCurrentPosition() / 1000;
-            mSeekBar.setProgress(cur);
-            ((TextView) findViewById(R.id.elapsed_time_text_view)).setText(String.format("%02d", cur / 60) + ":" + String.format("%02d", cur % 60));
-        }
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        Log.i(TAG, "onProgressChanged " + progress + fromUser);
-        if (fromUser) {
-            playerSrv.seek(progress * 1000);
-            paused = false;
-            setPlayPauseButtons(true);
-        }
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
-    }
 }
