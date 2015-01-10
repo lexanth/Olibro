@@ -139,7 +139,7 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 
     public int getCurrentPosition() {
         if (playerSrv != null && trackBound && playerSrv.isPng())
-            return playerSrv.getPosn();
+            return playerSrv.getPosition();
         return 0;
     }
 

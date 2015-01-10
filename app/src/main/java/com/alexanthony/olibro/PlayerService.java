@@ -195,7 +195,7 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
         startForeground(NOTIFY_ID, not);
 	}
 
-    public int getPosn(){
+    public int getPosition(){
         return player.getCurrentPosition();
     }
 
