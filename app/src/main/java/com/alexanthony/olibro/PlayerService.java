@@ -20,26 +20,26 @@ import com.alexanthony.olibro.Content.Track;
 import java.util.ArrayList;
 
 public class PlayerService extends Service implements
-MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
+        MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 
-	//media player
-	private MediaPlayer player;
-	//track list
-	private ArrayList<Track> tracks;
-	//current position
-	private int trackPosn=-1;
-	//binder
-	private final IBinder trackBind = new MediaBinder();
+    //media player
+    private MediaPlayer player;
+    //track list
+    private ArrayList<Track> tracks;
+    //current position
+    private int trackPosn = -1;
+    //binder
+    private final IBinder trackBind = new MediaBinder();
     // track title
-    private String trackTitle="";
+    private String trackTitle = "";
     // track author
-    private String trackAuthor="";
+    private String trackAuthor = "";
     // Notification ID
-    private static final int NOTIFY_ID=1;
+    private static final int NOTIFY_ID = 1;
 
     private static final String TAG = "PlayerService";
-    
+
     public String getTrackTitle() {
         Log.i(TAG, "getTrackTitle " + trackTitle);
         if (trackTitle.equals("")) {
@@ -49,36 +49,38 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
             return tracks.get(trackPosn).getTitle();
         }
     }
-    
-    public String getTrackAuthor() {return trackAuthor;}
 
-	public void onCreate(){
-		//create the service
-		super.onCreate();
-		//initialize position
-		trackPosn=0;
-		//create player
-		player = new MediaPlayer();
-		//initialize
-		initMediaPlayer();
+    public String getTrackAuthor() {
+        return trackAuthor;
+    }
+
+    public void onCreate() {
+        //create the service
+        super.onCreate();
+        //initialize position
+        trackPosn = 0;
+        //create player
+        player = new MediaPlayer();
+        //initialize
+        initMediaPlayer();
         requestAudioFocus();
-	}
+    }
 
-	public void initMediaPlayer(){
-		//set player properties
-		player.setWakeMode(getApplicationContext(),
-				PowerManager.PARTIAL_WAKE_LOCK);
-		player.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		//set listeners
-		player.setOnPreparedListener(this);
-		player.setOnCompletionListener(this);
-		player.setOnErrorListener(this);
-	}
+    public void initMediaPlayer() {
+        //set player properties
+        player.setWakeMode(getApplicationContext(),
+                PowerManager.PARTIAL_WAKE_LOCK);
+        player.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        //set listeners
+        player.setOnPreparedListener(this);
+        player.setOnCompletionListener(this);
+        player.setOnErrorListener(this);
+    }
 
-	//pass track list
-	public void setList(ArrayList<Track> theTracks){
-		tracks = theTracks;
-	}
+    //pass track list
+    public void setList(ArrayList<Track> theTracks) {
+        tracks = theTracks;
+    }
 
     @Override
     public void onAudioFocusChange(int focusChange) {
@@ -111,81 +113,80 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
     }
 
     //binder
-	public class MediaBinder extends Binder {
+    public class MediaBinder extends Binder {
         public PlayerService getService() {
             return PlayerService.this;
         }
-	}
+    }
 
-	//activity will bind to service
-	@Override
-	public IBinder onBind(Intent intent) {
-		return trackBind;
-	}
+    //activity will bind to service
+    @Override
+    public IBinder onBind(Intent intent) {
+        return trackBind;
+    }
 
-	//release resources when unbind
-	@Override
-	public boolean onUnbind(Intent intent){
-		player.stop();
-		//player.release();
-		return false;
-	}
+    //release resources when unbind
+    @Override
+    public boolean onUnbind(Intent intent) {
+        player.stop();
+        //player.release();
+        return false;
+    }
 
-	//play a track
-	public void playTrack(){
-		//play
-		player.reset();
-		//get track
-		Track playTrack = tracks.get(trackPosn);
+    //play a track
+    public void playTrack() {
+        //play
+        player.reset();
+        //get track
+        Track playTrack = tracks.get(trackPosn);
         trackTitle = playTrack.getTitle();
         Log.i(TAG, "playTrack " + trackTitle);
         trackAuthor = playTrack.getAuthor();
-		//get id
-		long currTrack = playTrack.getID();
-		//set uri
-		Uri trackUri = ContentUris.withAppendedId(
-				android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-				currTrack);
-		//set the data source
-		try{ 
-			player.setDataSource(getApplicationContext(), trackUri);
-		}
-		catch(Exception e){
-			Log.e("PLAYER SERVICE", "Error setting data source", e);
-		}
-		player.prepareAsync(); 
-	}
+        //get id
+        long currTrack = playTrack.getID();
+        //set uri
+        Uri trackUri = ContentUris.withAppendedId(
+                android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                currTrack);
+        //set the data source
+        try {
+            player.setDataSource(getApplicationContext(), trackUri);
+        } catch (Exception e) {
+            Log.e("PLAYER SERVICE", "Error setting data source", e);
+        }
+        player.prepareAsync();
+    }
 
-	//set the track
-	public void setTrack(int trackIndex){
-		trackPosn=trackIndex;
-	}
+    //set the track
+    public void setTrack(int trackIndex) {
+        trackPosn = trackIndex;
+    }
 
-	@Override
-	public void onCompletion(MediaPlayer mp) {
-        if(player.getCurrentPosition() > 0){
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        if (player.getCurrentPosition() > 0) {
             mp.reset();
             playNext();
         }
-	}
+    }
 
-	@Override
-	public boolean onError(MediaPlayer mp, int what, int extra) {
+    @Override
+    public boolean onError(MediaPlayer mp, int what, int extra) {
         mp.reset();
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public void onPrepared(MediaPlayer mp) {
-		//start playback
-		mp.start();
+    @Override
+    public void onPrepared(MediaPlayer mp) {
+        //start playback
+        mp.start();
         Intent notIntent = new Intent(this, MainActivity.class);
         notIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendIntent = PendingIntent.getActivity(this, 0, notIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         Notification.Builder builder = new Notification.Builder(this);
         builder.setContentIntent(pendIntent)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_olibro_notify)
                 .setTicker(trackTitle)
                 .setOngoing(true)
                 .setContentTitle("Playing")
@@ -193,41 +194,41 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
         Notification not = builder.build();
 
         startForeground(NOTIFY_ID, not);
-	}
+    }
 
-    public int getPosn(){
+    public int getPosn() {
         return player.getCurrentPosition();
     }
 
-    public int getDur(){
+    public int getDur() {
         return player.getDuration();
     }
 
-    public boolean isPng(){
+    public boolean isPng() {
         return player.isPlaying();
     }
 
-    public void pausePlayer(){
+    public void pausePlayer() {
         player.pause();
     }
 
-    public void seek(int posn){
+    public void seek(int posn) {
         player.seekTo(posn);
     }
 
-    public void go(){
+    public void go() {
         player.start();
     }
 
-    public void playPrev(){
+    public void playPrev() {
         trackPosn--;
-        if(trackPosn<0) trackPosn= tracks.size()-1;
+        if (trackPosn < 0) trackPosn = tracks.size() - 1;
         playTrack();
     }
 
-    public void playNext(){
+    public void playNext() {
         trackPosn++;
-        if(trackPosn> tracks.size()) trackPosn=0;
+        if (trackPosn > tracks.size()) trackPosn = 0;
         playTrack();
     }
 

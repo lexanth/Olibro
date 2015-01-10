@@ -24,7 +24,8 @@ public class Compilation {
 
     public void addTrack(Track track) {
         track.setCompID(id);
-        tracks.add((Track) track);
+        //noinspection unchecked
+        tracks.add(track);
     }
 
     public long getId() {
