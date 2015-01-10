@@ -24,7 +24,7 @@ public class Compilation {
 
     public void addTrack(Track track) {
         track.setCompID(id);
-        tracks.add((Track) track);
+        tracks.add(track);
     }
 
     public long getId() {
