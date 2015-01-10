@@ -64,6 +64,7 @@ public class MainActivity extends BaseActivity {
         trackView.setAdapter(trackAdt);
         setUpSlidingLayout();
         setPlayPauseButtonListener();
+        setSeekBarChangedListener();
     }
 
 	//connect to the service

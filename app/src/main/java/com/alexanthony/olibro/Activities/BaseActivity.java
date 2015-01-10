@@ -48,8 +48,7 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         getActionBar().setDisplayShowTitleEnabled(true);
         // Set up listener for play/pause buttons
         setPlayPauseButtonListener();
-        mSeekBar = (SeekBar) findViewById(R.id.seek_bar);
-        mSeekBar.setOnSeekBarChangeListener(this);
+        setSeekBarChangedListener();
     }
 
 
@@ -323,6 +322,12 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
             return null;
         }
 
+    }
+    
+    protected void setSeekBarChangedListener() {
+        mSeekBar = (SeekBar) findViewById(R.id.seek_bar);
+        mSeekBar.setOnSeekBarChangeListener(this);
+        
     }
 
 }
