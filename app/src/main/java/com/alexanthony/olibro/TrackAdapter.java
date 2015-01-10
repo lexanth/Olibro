@@ -17,7 +17,6 @@ public class TrackAdapter extends BaseAdapter {
     //track list and layout
     private ArrayList<Track> tracks;
     private LayoutInflater trackInf;
-    private LinearLayout trackLay = null;
 
     //constructor
     public TrackAdapter(Context c, ArrayList<Track> theTracks) {
@@ -43,10 +42,8 @@ public class TrackAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //map to track layout
-        if (trackLay == null) {
-            trackLay = (LinearLayout) trackInf.inflate
-                    (R.layout.track, parent, false);
-        }
+        LinearLayout trackLay = (LinearLayout) trackInf.inflate
+                (R.layout.track, parent, false);
         //get title and author views
         TextView songView = (TextView) trackLay.findViewById(R.id.track_title);
         TextView authorView = (TextView) trackLay.findViewById(R.id.track_author);

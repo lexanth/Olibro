@@ -21,7 +21,7 @@ import com.alexanthony.olibro.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
 public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeListener, SlidingUpPanelLayout.PanelSlideListener {
-    private final String TAG = "com.alexanthony.olibro.BaseActivity";
+    private String TAG = "com.alexanthony.olibro.BaseActivity";
     //service
     protected PlayerService playerSrv;
     protected Intent playIntent;

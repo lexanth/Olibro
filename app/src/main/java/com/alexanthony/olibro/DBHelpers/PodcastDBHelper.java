@@ -73,9 +73,9 @@ public class PodcastDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         Cursor podCursor;
         if (subID == -1) {
-            podCursor = db.query(TABLE_PODCASTS, null, null, null, null, null, SubscriptionDBHelper.KEY_SUBSCRIPTION_ID);
+            podCursor = db.query(TABLE_PODCASTS, null, null, null, null, null, KEY_SUBSCRIPTION_ID);
         } else {
-            podCursor = db.query(TABLE_PODCASTS, null, SubscriptionDBHelper.KEY_SUBSCRIPTION_ID + "= ?", new String[]{Long.toString(subID)}, null, null, KEY_PODCAST_TITLE);
+            podCursor = db.query(TABLE_PODCASTS, null, KEY_SUBSCRIPTION_ID + "= ?", new String[]{Long.toString(subID)}, null, null, KEY_PODCAST_TITLE);
         }
         if (podCursor.moveToFirst()) {
             do {
@@ -85,7 +85,7 @@ public class PodcastDBHelper extends SQLiteOpenHelper {
                 pod.setTitle(podCursor.getString(podCursor.getColumnIndex(KEY_PODCAST_TITLE)));
                 pod.setDuration(podCursor.getInt(podCursor.getColumnIndex(KEY_PODCAST_DURATION)));
                 pod.setLastPlayed(podCursor.getInt(podCursor.getColumnIndex(KEY_PODCAST_LAST_PLAYED_POSITION)));
-                pod.setSubscriptionID(podCursor.getLong(podCursor.getColumnIndex(SubscriptionDBHelper.KEY_SUBSCRIPTION_ID)));
+                pod.setSubscriptionID(podCursor.getLong(podCursor.getColumnIndex(KEY_SUBSCRIPTION_ID)));
                 pods.add(pod);
             } while (podCursor.moveToNext());
         }

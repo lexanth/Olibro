@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_main"
-    android:animationCache="true">
-    <!--android:background="@color/olibro_purple">-->
+    android:animationCache="true"
+    android:background="@color/olibro_purple">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/current_track_art_image_small"
-            android:contentDescription="@string/current_track_art"
+            android:contentDescription="currentTrackArt"
             android:src="@drawable/ic_art_placeholder_small"
             android:padding="2dp"
             android:maxHeight="60dp"
@@ -28,24 +28,25 @@
 
         <LinearLayout
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:layout_weight="1"
-            android:padding="2dp">
+            android:paddingLeft="2dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/track_name_text_view" />
-            <!--android:layout_weight="1" />-->
+                android:id="@+id/track_name_text_view"
+                android:layout_weight="1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/track_author_text_view" />
-            <!--android:layout_weight="1" />-->
+                android:id="@+id/track_author_text_view"
+                android:layout_weight="1" />
         </LinearLayout>
 
         <ImageButton
@@ -53,7 +54,7 @@
             android:layout_height="match_parent"
             android:id="@+id/play_pause_button"
             android:src="@drawable/ic_action_av_play_arrow_dark"
-            android:contentDescription="@string/play_pause_button"
+            android:contentDescription="Play Pause Button"
             android:theme="@style/MyAppTheme"
             android:nestedScrollingEnabled="false"
             android:padding="2dp"
@@ -70,7 +71,7 @@
         android:layout_height="0dp"
         android:id="@+id/current_track_art_image_view_large"
         android:layout_weight="1"
-        android:src="@drawable/ic_art_placeholder_large"
+        android:src="@drawable/ic_art_placeholder"
         android:background="@android:color/background_light"
         android:theme="@style/LightBackDarkText" />
 
@@ -83,14 +84,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zero_time"
+            android:text="00:00"
             android:id="@+id/elapsed_time_text_view"
             android:layout_gravity="center"
-            android:padding="4dp"
+            android:padding="2dp"
             android:theme="@style/LightBackDarkText" />
 
         <SeekBar
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/seek_bar"
             android:layout_gravity="center_horizontal"
@@ -101,10 +102,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/play_pause_button"
+            android:text="00:00"
             android:id="@+id/duration_text_view"
             android:layout_gravity="center"
-            android:padding="4dp"
+            android:padding="2dp"
             android:theme="@style/LightBackDarkText" />
 
     </LinearLayout>

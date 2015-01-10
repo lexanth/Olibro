@@ -3,9 +3,7 @@
 
     <string name="app_name">Olibro</string>
     <string name="title_activity_base">BaseActivity</string>
+    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="current_track_art">Current Track Art</string>
-    <string name="play_pause_button">Play/Pause Button</string>
-    <string name="zero_time">00:00</string>
 
 </resources>

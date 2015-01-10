@@ -32,7 +32,7 @@ import java.util.Comparator;
 public class MainActivity extends BaseActivity {
     //track list variables
     private ArrayList<Track> trackList;
-    private final String bookPath = "Audiobooks";
+    private String bookPath="Audiobooks";
 
     private static final String TAG = "com.alexanthony.olibro.MainActivity";
 
