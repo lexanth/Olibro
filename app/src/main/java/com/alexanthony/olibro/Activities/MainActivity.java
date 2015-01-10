@@ -55,9 +55,7 @@ public class MainActivity extends BaseActivity {
 		//create and set adapter
 		TrackAdapter trackAdt = new TrackAdapter(this, trackList);
         trackView.setAdapter(trackAdt);
-        setUpSlidingLayout();
-        setPlayPauseButtonListener();
-        setSeekBarChangedListener();
+        setControlListeners();
     }
 
 	//connect to the service
@@ -161,5 +159,8 @@ public class MainActivity extends BaseActivity {
 		playerSrv=null;
 		super.onDestroy();
 	}
+    
+    //////////////////////// Button Listeners //////////////////////
+
 
 }

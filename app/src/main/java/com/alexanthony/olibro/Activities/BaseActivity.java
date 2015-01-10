@@ -39,16 +39,14 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-        // set up sliding layout
-        setUpSlidingLayout();
         // using Toolbar instead of ActionBar
         mToolBar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(mToolBar);
         getActionBar().setTitle("Olibro");
         getActionBar().setDisplayShowTitleEnabled(true);
         // Set up listener for play/pause buttons
-        setPlayPauseButtonListener();
-        setSeekBarChangedListener();
+        setControlListeners();
+
     }
 
 
@@ -85,10 +83,9 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     }
         
     ///////////////////// Sliding Layout //////////////////////////
-    public void setUpSlidingLayout() {
+    public void setSlidingLayoutListener() {
         Log.i(TAG, "setUpSlidingLayout");
         sliding_layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        Log.i(TAG, "setUpSlidingLayout" + sliding_layout.isPanelExpanded());
         sliding_layout.setPanelSlideListener(this);
     }
 
@@ -184,6 +181,7 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     ///////////////////// Player Controls /////////////////////////
     protected void setMediaControl() {
         Log.i(TAG, "setMediaControl " + paused);
+        setMediaTextViews();
         setPlayPauseButtons(!paused);
         setMediaTextViews();
         setProgressControls();
@@ -237,6 +235,40 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         playPauseButton1.setOnClickListener(playPauseListener);
         playPauseButton2.setOnClickListener(playPauseListener);
     }
+    
+    protected void setControlListeners() {
+        setPlayPauseButtonListener();
+        ImageButton prevButton = (ImageButton)findViewById(R.id.prev_button);
+        prevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onPrevClick(v);
+            }
+        });
+        ImageButton backButton = (ImageButton)findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackClick(v);
+            }
+        });
+        ImageButton forwardButton = (ImageButton)findViewById(R.id.forward_button);
+        forwardButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onForwardClick(v);
+            }
+        });
+        ImageButton nextButton = (ImageButton)findViewById(R.id.next_button);
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onNextClick(v);
+            }
+        });
+        setSlidingLayoutListener();
+        setSeekBarChangedListener();
+    }
 
     ///////////////////// Media Button actions ////////////////////
     public void onPrevClick(View view) {
@@ -250,13 +282,23 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     public void onBackClick(View view) {
         //
         int progress = getCurrentPosition();
-        seekTo(progress - 5000);
+        // TODO: use a configurable value
+        if (progress < 5000) {
+            seekTo(0);
+        } else {
+            seekTo(progress - 5000);
+        }
     }
 
     public void onForwardClick(View view) {
-        //
+        // TODO: use a configurable value
         int progress = getCurrentPosition();
-        seekTo(progress - 5000);
+        int duration = getDuration();
+        if ((duration - progress) < 5000) {
+            playNext();
+        } else {
+            seekTo(progress + 5000);
+        }
     }
 
     public void onPlayPauseClick(View view) {
@@ -329,5 +371,7 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         mSeekBar.setOnSeekBarChangeListener(this);
         
     }
+    
+    
 
 }
