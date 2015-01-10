@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_main"
     android:animationCache="true">
+    <!--android:background="@color/olibro_purple">-->
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:theme="@style/Purple"
         android:layout_height="60dp">
 
         <ImageView
@@ -37,15 +37,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:id="@+id/track_name_text_view"
-                android:layout_weight="1" />
+                android:id="@+id/track_name_text_view" />
+            <!--android:layout_weight="1" />-->
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:id="@+id/track_author_text_view"
-                android:layout_weight="1" />
+                android:id="@+id/track_author_text_view" />
+            <!--android:layout_weight="1" />-->
         </LinearLayout>
 
         <ImageButton
@@ -72,12 +72,13 @@
         android:layout_weight="1"
         android:src="@drawable/ic_art_placeholder_large"
         android:background="@android:color/background_light"
-        android:theme="@style/MyAppTheme" />
+        android:theme="@style/LightBackDarkText" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:theme="@style/LightBackDarkText">
 
         <TextView
             android:layout_width="wrap_content"
@@ -86,7 +87,7 @@
             android:id="@+id/elapsed_time_text_view"
             android:layout_gravity="center"
             android:padding="4dp"
-            android:theme="@style/MyAppTheme" />
+            android:theme="@style/LightBackDarkText" />
 
         <SeekBar
             android:layout_width="0dp"
@@ -95,17 +96,16 @@
             android:layout_gravity="center_horizontal"
             android:progressDrawable="@drawable/seekbar"
             android:maxHeight="2dp"
-            android:layout_weight="1"
-            android:theme="@style/MyAppTheme" />
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/zero_time"
+            android:text="@string/play_pause_button"
             android:id="@+id/duration_text_view"
             android:layout_gravity="center"
             android:padding="4dp"
-            android:theme="@style/MyAppTheme" />
+            android:theme="@style/LightBackDarkText" />
 
     </LinearLayout>
 
@@ -113,7 +113,8 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:layout_gravity="center_horizontal"
+        android:theme="@style/LightBackDarkText">
 
         <ImageButton
             android:layout_width="wrap_content"

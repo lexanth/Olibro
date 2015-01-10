@@ -35,8 +35,8 @@
         <item name="android:elevation">4dp</item>
     </style>-->
 
-    <style name="Purple" parent="MyAppTheme">
-        <item name="android:textColor">@android:color/primary_text_dark</item>
-        <item name="android:background">@color/olibro_purple</item>
+    <style name="LightBackDarkText" parent="@android:style/Theme.Material">
+        <item name="android:textColor">@android:color/primary_text_light</item>
+        <item name="android:background">@android:color/background_light</item>
     </style>
 </resources>
