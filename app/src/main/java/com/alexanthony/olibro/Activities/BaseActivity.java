@@ -32,8 +32,7 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     protected ImageButton playPauseButton1;
     protected ImageButton playPauseButton2;
     protected SlidingUpPanelLayout sliding_layout;
-    // TODO: remove one of these
-    protected boolean paused = false, playbackPaused = false;
+    protected boolean paused = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,23 +150,23 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 
     public void pause() {
         playerSrv.pausePlayer();
-        playbackPaused = true;
+        paused = true;
     }
 
     private void playNext() {
         playerSrv.playNext();
-        if (playbackPaused) {
+        if (paused) {
             //TODO: Update media player
-            playbackPaused = false;
+            paused = false;
             setMediaControl();
         }
     }
 
     private void playPrev() {
         playerSrv.playPrev();
-        if (playbackPaused) {
+        if (paused) {
             // TODO: Update media player
-            playbackPaused = false;
+            paused = false;
             setMediaControl();
         }
     }

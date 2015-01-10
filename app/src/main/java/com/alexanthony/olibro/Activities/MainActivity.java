@@ -94,8 +94,8 @@ public class MainActivity extends BaseActivity {
 	public void trackPicked(View view){
 		playerSrv.setTrack(Integer.parseInt(view.getTag().toString()));
 		playerSrv.playTrack();
-        if (playbackPaused) {
-            playbackPaused = false;
+        if (paused) {
+            paused = false;
         }
         setMediaControl();
 	}
