@@ -185,7 +185,7 @@ MediaPlayer.OnCompletionListener, AudioManager.OnAudioFocusChangeListener {
 
         Notification.Builder builder = new Notification.Builder(this);
         builder.setContentIntent(pendIntent)
-                .setSmallIcon(R.drawable.ic_launcher)
+                .setSmallIcon(R.drawable.ic_olibro_notify)
                 .setTicker(trackTitle)
                 .setOngoing(true)
                 .setContentTitle("Playing")
