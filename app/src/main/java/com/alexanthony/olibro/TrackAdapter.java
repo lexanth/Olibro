@@ -42,8 +42,9 @@ public class TrackAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //map to track layout
+        // can't do if trackLay == null, otherwise we don't make all the trackLays
         LinearLayout trackLay = (LinearLayout) trackInf.inflate
-                (R.layout.track, parent, false);
+                    (R.layout.track, parent, false);
         //get title and author views
         TextView songView = (TextView) trackLay.findViewById(R.id.track_title);
         TextView authorView = (TextView) trackLay.findViewById(R.id.track_author);
