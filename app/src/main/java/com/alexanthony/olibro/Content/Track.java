@@ -1,7 +1,11 @@
 package com.alexanthony.olibro.Content;
 
-// TODO: Decide if this should have an author
-public class Track {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+// Thanks to parcelabler.com
+// TODO: decide if this should have author
+public class Track implements Parcelable {
 
     private long id;
     private String title;
@@ -101,4 +105,43 @@ public class Track {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
+
+    protected Track(Parcel in) {
+        id = in.readLong();
+        title = in.readString();
+        author = in.readString();
+        duration = in.readInt();
+        lastPlayed = in.readInt();
+        compID = in.readLong();
+        fileName = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(title);
+        dest.writeString(author);
+        dest.writeInt(duration);
+        dest.writeInt(lastPlayed);
+        dest.writeLong(compID);
+        dest.writeString(fileName);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<Track> CREATOR = new Parcelable.Creator<Track>() {
+        @Override
+        public Track createFromParcel(Parcel in) {
+            return new Track(in);
+        }
+
+        @Override
+        public Track[] newArray(int size) {
+            return new Track[size];
+        }
+    };
 }
