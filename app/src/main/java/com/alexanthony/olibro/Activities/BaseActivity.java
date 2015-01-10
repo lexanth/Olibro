@@ -1,13 +1,16 @@
 package com.alexanthony.olibro.Activities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -17,7 +20,7 @@ import com.alexanthony.olibro.PlayerService;
 import com.alexanthony.olibro.R;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 
-public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeListener {
+public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeListener, SlidingUpPanelLayout.PanelSlideListener {
     private String TAG = "com.alexanthony.olibro.BaseActivity";
     //service
     protected PlayerService playerSrv;
@@ -41,8 +44,12 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         // using Toolbar instead of ActionBar
         mToolBar = (Toolbar) findViewById(R.id.toolbar);
         setActionBar(mToolBar);
+        getActionBar().setTitle("Olibro");
+        getActionBar().setDisplayShowTitleEnabled(true);
         // Set up listener for play/pause buttons
         setPlayPauseButtonListener();
+        mSeekBar = (SeekBar) findViewById(R.id.seek_bar);
+        mSeekBar.setOnSeekBarChangeListener(this);
     }
 
 
@@ -68,37 +75,52 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         return super.onOptionsItemSelected(item);
     }
 
+    ///////////////////// Content Frame ///////////////////////////
+    protected View setContentFrame(int viewID) {
+        FrameLayout contentFrame = (FrameLayout) findViewById(R.id.content_frame);
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View contentView = inflater.inflate(viewID, null);
+        contentFrame.addView(contentView);
+        return contentView;
+
+    }
+        
     ///////////////////// Sliding Layout //////////////////////////
     public void setUpSlidingLayout() {
+        Log.i(TAG, "setUpSlidingLayout");
         sliding_layout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        sliding_layout.setPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
-            }
+        Log.i(TAG, "setUpSlidingLayout" + sliding_layout.isPanelExpanded());
+        sliding_layout.setPanelSlideListener(this);
+    }
 
-            @Override
-            public void onPanelCollapsed(View view) {
-                findViewById(R.id.current_track_art_image_small).setVisibility(View.VISIBLE);
-                playPauseButton1.setVisibility(View.VISIBLE);
-            }
+    @Override
+    public void onPanelSlide(View view, float v) {
 
-            @Override
-            public void onPanelExpanded(View panel) {
-                findViewById(R.id.current_track_art_image_small).setVisibility(View.GONE);
-                playPauseButton1.setVisibility(View.GONE);
-                new SeekBarHandler().execute();
-            }
+    }
 
-            @Override
-            public void onPanelAnchored(View view) {
-            }
+    @Override
+    public void onPanelCollapsed(View view) {
+        findViewById(R.id.current_track_art_image_small).setVisibility(View.VISIBLE);
+        playPauseButton1.setVisibility(View.VISIBLE);
 
-            @Override
-            public void onPanelHidden(View panel) {
-            }
-        });
-        mSeekBar = (SeekBar) findViewById(R.id.seek_bar);
-        mSeekBar.setOnSeekBarChangeListener(this);
+    }
+
+    @Override
+    public void onPanelExpanded(View view) {
+        findViewById(R.id.current_track_art_image_small).setVisibility(View.GONE);
+        playPauseButton1.setVisibility(View.GONE);
+        Log.i(TAG, "onPanelExpanded");
+        new SeekBarHandler().execute();
+    }
+
+    @Override
+    public void onPanelAnchored(View view) {
+
+    }
+
+    @Override
+    public void onPanelHidden(View view) {
+
     }
 
     ///////////////////// Play Status ////////////////////////////
@@ -161,7 +183,7 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
     }
 
     ///////////////////// Player Controls /////////////////////////
-    public void setMediaControl() {
+    protected void setMediaControl() {
         Log.i(TAG, "setMediaControl " + paused);
         setPlayPauseButtons(!paused);
         setMediaTextViews();
@@ -169,7 +191,7 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         new SeekBarHandler().execute();
     }
 
-    public void setMediaTextViews() {
+    protected void setMediaTextViews() {
         String title = playerSrv.getTrackTitle();
         Log.i(TAG, "setMediaControl " + title);
         String author = playerSrv.getTrackAuthor();
@@ -193,7 +215,7 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         }
     }
 
-    private void setPlayPauseButtons(boolean playing) {
+    protected void setPlayPauseButtons(boolean playing) {
         Log.i(TAG, "setPlayPauseButtons " + playing);
         // Dark and light are the colours of the backgrounds, not the images
         if (playing) {
@@ -205,7 +227,7 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         }
     }
 
-    private void setPlayPauseButtonListener() {
+    protected void setPlayPauseButtonListener() {
         playPauseButton1 = (ImageButton) findViewById(R.id.play_pause_button);
         playPauseButton2 = (ImageButton) findViewById(R.id.play_pause_button_2);
         View.OnClickListener playPauseListener = new View.OnClickListener() {
@@ -280,9 +302,11 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
 
         @Override
         protected Void doInBackground(Void... arg0) {
+//            Log.i(TAG, "doInBackground" + isPlaying() + sliding_layout.isPanelExpanded());
             while (isPlaying() && sliding_layout.isPanelExpanded()) {
+                //               Log.i(TAG, "doInBackground");
                 try {
-                    Thread.sleep(250);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

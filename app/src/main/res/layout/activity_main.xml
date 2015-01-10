@@ -8,7 +8,7 @@
 
     <include layout="@layout/toolbar" />
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    <!--<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
@@ -17,29 +17,16 @@
         sothree:panelHeight="60dp"
         sothree:shadowHeight="0dp">
 
-
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="@android:color/background_light"
-            android:gravity="center"
-            tools:context=".MainActivity">
-
-
-            <!-- track list -->
-
-            <ListView
-                android:id="@+id/track_list"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/background_light"></ListView>
-
-        </LinearLayout>
+        <ViewStub android:id="@+id/stub"
+            android:inflatedId="@+id/subTree"
+            android:layout="@layout/mySubTree"
+            android:layout_width="120dip"
+            android:layout_height="40dip" />
 
         <include layout="@layout/play_status" />
 
-    </com.sothree.slidinguppanel.SlidingUpPanelLayout>
+    </com.sothree.slidinguppanel.SlidingUpPanelLayout>-->
+    <include layout="@layout/sliding_layout" />
+
+
 </LinearLayout>
-    

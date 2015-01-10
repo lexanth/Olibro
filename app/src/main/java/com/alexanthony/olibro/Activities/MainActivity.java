@@ -26,10 +26,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+//import android.view.LayoutInflater;
+//import android.widget.FrameLayout;
+
 public class MainActivity extends BaseActivity {
     //track list variables
     private ArrayList<Track> trackList;
-    private ListView trackView;
     private String bookPath="Audiobooks";
 
     private static final String TAG = "com.alexanthony.olibro.MainActivity";
@@ -40,8 +42,14 @@ public class MainActivity extends BaseActivity {
 		setContentView(R.layout.activity_main);
 
 		//retrieve list view
-		trackView = (ListView)findViewById(R.id.track_list);
-		//instantiate list
+//		//trackView = (ListView)findViewById(R.id.track_list);
+//
+//        FrameLayout contentFrame = (FrameLayout)findViewById(R.id.content_frame);
+//        LayoutInflater inflater= (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        View trackView = inflater.inflate(R.layout.track_list, null);
+//        contentFrame.addView(trackView);
+        ListView trackView = (ListView) setContentFrame(R.layout.track_list);
+        //instantiate list
         trackList = new ArrayList<>();
         //get songs from device
 		getTrackList();
@@ -53,7 +61,9 @@ public class MainActivity extends BaseActivity {
 		});
 		//create and set adapter
 		TrackAdapter trackAdt = new TrackAdapter(this, trackList);
-		trackView.setAdapter(trackAdt);
+        trackView.setAdapter(trackAdt);
+        setUpSlidingLayout();
+        setPlayPauseButtonListener();
     }
 
 	//connect to the service
