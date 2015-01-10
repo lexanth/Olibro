@@ -41,13 +41,6 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		//retrieve list view
-//		//trackView = (ListView)findViewById(R.id.track_list);
-//
-//        FrameLayout contentFrame = (FrameLayout)findViewById(R.id.content_frame);
-//        LayoutInflater inflater= (LayoutInflater)this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        View trackView = inflater.inflate(R.layout.track_list, null);
-//        contentFrame.addView(trackView);
         ListView trackView = (ListView) setContentFrame(R.layout.track_list);
         //instantiate list
         trackList = new ArrayList<>();
