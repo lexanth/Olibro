@@ -5,11 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:showIn="@layout/activity_main"
-    android:animationCache="true"
-    android:background="@color/olibro_purple">
+    android:animationCache="true">
 
     <LinearLayout
         android:orientation="horizontal"
+        android:theme="@style/Purple"
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
@@ -17,8 +17,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/current_track_art_image_small"
-            android:contentDescription="currentTrackArt"
+            android:contentDescription="@string/current_track_art"
             android:src="@drawable/ic_art_placeholder_small"
+            android:background="@android:color/transparent"
             android:padding="2dp"
             android:maxHeight="60dp"
             android:maxWidth="60dp"
@@ -54,8 +55,7 @@
             android:layout_height="match_parent"
             android:id="@+id/play_pause_button"
             android:src="@drawable/ic_action_av_play_arrow_dark"
-            android:contentDescription="Play Pause Button"
-            android:theme="@style/MyAppTheme"
+            android:contentDescription="@string/play_pause_button"
             android:nestedScrollingEnabled="false"
             android:padding="2dp"
             android:background="@android:color/transparent"
@@ -71,24 +71,24 @@
         android:layout_height="0dp"
         android:id="@+id/current_track_art_image_view_large"
         android:layout_weight="1"
-        android:src="@drawable/ic_art_placeholder"
-        android:background="@android:color/background_light"
-        android:theme="@style/LightBackDarkText" />
+        android:src="@drawable/ic_art_placeholder_large"
+        android:background="@android:color/transparent"
+        android:theme="@style/MyAppTheme" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/LightBackDarkText">
+        android:theme="@style/MyAppTheme">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
+            android:text="@string/zero_time"
             android:id="@+id/elapsed_time_text_view"
             android:layout_gravity="center"
             android:padding="2dp"
-            android:theme="@style/LightBackDarkText" />
+            android:theme="@style/MyAppTheme" />
 
         <SeekBar
             android:layout_width="match_parent"
@@ -102,11 +102,11 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00"
+            android:text="@string/zero_time"
             android:id="@+id/duration_text_view"
             android:layout_gravity="center"
             android:padding="2dp"
-            android:theme="@style/LightBackDarkText" />
+            android:theme="@style/MyAppTheme" />
 
     </LinearLayout>
 
@@ -115,7 +115,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:theme="@style/LightBackDarkText">
+        android:theme="@style/MyAppTheme">
 
         <ImageButton
             android:layout_width="wrap_content"
