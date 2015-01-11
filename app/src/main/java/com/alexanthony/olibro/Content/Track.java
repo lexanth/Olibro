@@ -9,43 +9,47 @@ public class Track implements Parcelable {
 
     private long id;
     private String title;
-    private String author;
-    private int duration;
-    private int lastPlayed = 0;
+    //private String author;
+    private long duration;
+    private long lastPlayed = 0;
     private long compID = 0;
-    private String fileName;
+    private String fileName = "";
 
     public Track() {
     }
 
     // Might be temporary, used when pulling track from MediaStore
-    public Track(long trackID, String trackTitle, String trackAuthor) {
+    public Track(long trackID, String trackTitle) {
         id = trackID;
         title = trackTitle;
-        author = trackAuthor;
+        //author = trackAuthor;
+    }
+    
+    public Track(long trackID, String trackTitle, String trackFileName) {
+        id = trackID;
+        title = trackTitle;
+        fileName = trackFileName;
     }
 
-    public Track(long trackID, String trackTitle, String trackAuthor, int trackDuration, int lastPlayedPosition, long trackCompID) {
+    public Track(long trackID, String trackTitle, long trackDuration, long lastPlayedPosition, long trackCompID) {
         id = trackID;
         title = trackTitle;
-        author = trackAuthor;
+        //author = trackAuthor;
         duration = trackDuration;
         lastPlayed = lastPlayedPosition;
         compID = trackCompID;
     }
 
-    public Track(long trackID, String trackTitle, String trackAuthor, int trackDuration, int lastPlayedPosition) {
+    public Track(long trackID, String trackTitle, long trackDuration, long lastPlayedPosition) {
         id = trackID;
         title = trackTitle;
-        author = trackAuthor;
         duration = trackDuration;
         lastPlayed = lastPlayedPosition;
     }
 
-    public Track(long trackID, String trackTitle, String trackAuthor, int trackDuration) {
+    public Track(long trackID, String trackTitle, long trackDuration) {
         id = trackID;
         title = trackTitle;
-        author = trackAuthor;
         duration = trackDuration;
     }
 
@@ -56,17 +60,21 @@ public class Track implements Parcelable {
     public String getTitle() {
         return title;
     }
-
-    // should probably get book author
+    
     public String getAuthor() {
-        return author;
+        return "An Author";
     }
 
-    public int getDuration() {
+    // should probably get book author
+    //public String getAuthor() {
+    //    return author;
+    //}
+
+    public long getDuration() {
         return duration;
     }
 
-    public int getLastPlayed() {
+    public long getLastPlayed() {
         return lastPlayed;
     }
 
@@ -86,15 +94,15 @@ public class Track implements Parcelable {
         this.title = title;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
+    //public void setAuthor(String author) {
+    //    this.author = author;
+    //}
 
-    public void setDuration(int duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 
-    public void setLastPlayed(int lastPlayed) {
+    public void setLastPlayed(long lastPlayed) {
         this.lastPlayed = lastPlayed;
     }
 
@@ -109,9 +117,9 @@ public class Track implements Parcelable {
     protected Track(Parcel in) {
         id = in.readLong();
         title = in.readString();
-        author = in.readString();
+        //author = in.readString();
         duration = in.readInt();
-        lastPlayed = in.readInt();
+        lastPlayed = in.readLong();
         compID = in.readLong();
         fileName = in.readString();
     }
@@ -125,9 +133,9 @@ public class Track implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeLong(id);
         dest.writeString(title);
-        dest.writeString(author);
-        dest.writeInt(duration);
-        dest.writeInt(lastPlayed);
+        //dest.writeString(author);
+        dest.writeLong(duration);
+        dest.writeLong(lastPlayed);
         dest.writeLong(compID);
         dest.writeString(fileName);
     }

@@ -6,18 +6,18 @@ public class Podcast extends Track {
 
     }
 
-    public Podcast(long podID, String podTitle, String podArtist, int podDuration) {
-        super(podID, podTitle, podArtist, podDuration);
+    public Podcast(long podID, String podTitle, long podDuration) {
+        super(podID, podTitle, podDuration);
 
     }
 
-    public Podcast(long podID, String podTitle, String podArtist, int podDuration, int podLastPlayed) {
-        super(podID, podTitle, podArtist, podDuration, podLastPlayed);
+    public Podcast(long podID, String podTitle, long podDuration, long podLastPlayed) {
+        super(podID, podTitle, podDuration, podLastPlayed);
 
     }
 
-    public Podcast(long podID, String podTitle, String podArtist, int podDuration, int podLastPlayed, long podCompID) {
-        super(podID, podTitle, podArtist, podDuration, podLastPlayed, podCompID);
+    public Podcast(long podID, String podTitle, long podDuration, long podLastPlayed, long podCompID) {
+        super(podID, podTitle, podDuration, podLastPlayed, podCompID);
 
     }
 

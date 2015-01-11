@@ -9,8 +9,8 @@ public class Compilation implements Parcelable {
     private long id;
     private String name;
     private String author;
-    private String path;
-    private String artPath;
+    private String path="";
+    private String artPath="";
     private ArrayList tracks;
 
     public Compilation() {
@@ -23,6 +23,12 @@ public class Compilation implements Parcelable {
         path = compPath;
         artPath = compArtPath;
 
+    }
+
+    public Compilation(long compID, String compName, String compAuthor) {
+        id = compID;
+        name = compName;
+        author = compAuthor;
     }
 
     public void addTrack(Track track) {

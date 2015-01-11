@@ -11,4 +11,9 @@ public class Book extends Compilation {
         super(bookID, bookName, bookAuthor, bookPath, bookArtPath);
     }
 
+    public Book(long bookID, String bookName, String bookAuthor) {
+        //
+        super(bookID, bookName, bookAuthor);
+    }
+
 }

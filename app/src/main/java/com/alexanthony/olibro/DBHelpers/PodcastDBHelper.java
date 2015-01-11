@@ -22,7 +22,7 @@ public class PodcastDBHelper extends SQLiteOpenHelper {
     // file name within subfolder
     private final String KEY_PODCAST_FILE = "KEY_PODCAST_FILE";
     private final String CREATE_PODCAST_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_PODCASTS + " ( " +
-            KEY_PODCAST_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            KEY_PODCAST_ID + " INTEGER PRIMARY KEY, " +
             KEY_PODCAST_FILE + " TEXT NOT NULL, " +
             KEY_PODCAST_TITLE + " TEXT NOT NULL, " +
             KEY_PODCAST_DURATION + " INTEGER NOT NULL, " +
@@ -89,6 +89,7 @@ public class PodcastDBHelper extends SQLiteOpenHelper {
                 pods.add(pod);
             } while (podCursor.moveToNext());
         }
+        podCursor.close();
         return pods;
     }
 

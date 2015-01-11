@@ -370,7 +370,6 @@ public class BaseActivity extends Activity implements SeekBar.OnSeekBarChangeLis
         mSeekBar.setOnSeekBarChangeListener(this);
         
     }
-    
-    
+
 
 }

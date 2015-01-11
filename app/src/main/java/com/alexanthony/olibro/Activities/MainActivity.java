@@ -2,6 +2,7 @@ package com.alexanthony.olibro.Activities;
 
 import android.content.ComponentName;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
@@ -16,12 +17,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 
+import com.alexanthony.olibro.Content.Book;
+import com.alexanthony.olibro.Content.Chapter;
 import com.alexanthony.olibro.Content.Track;
+import com.alexanthony.olibro.DBHelpers.BookDBHelper;
+import com.alexanthony.olibro.DBHelpers.ChapterDBHelper;
 import com.alexanthony.olibro.PlayerService;
 import com.alexanthony.olibro.PlayerService.MediaBinder;
 import com.alexanthony.olibro.R;
 import com.alexanthony.olibro.TrackAdapter;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,6 +62,7 @@ public class MainActivity extends BaseActivity {
 		TrackAdapter trackAdt = new TrackAdapter(this, trackList);
         trackView.setAdapter(trackAdt);
         setControlListeners();
+        populateBookDB();
     }
 
 	//connect to the service
@@ -134,7 +141,7 @@ public class MainActivity extends BaseActivity {
             // Handle error
             Log.e("MainActivity", "MainActivity.getTrackList - null cursor");
         }
-        if (mediaCursor.moveToFirst()) {
+        if (mediaCursor != null && mediaCursor.moveToFirst()) {
             //get columns
 			int titleColumn = mediaCursor.getColumnIndex
 					(android.provider.MediaStore.Audio.Media.TITLE);
@@ -160,7 +167,55 @@ public class MainActivity extends BaseActivity {
 		super.onDestroy();
 	}
     
-    //////////////////////// Button Listeners //////////////////////
+    //////////////////////// DB Stuff //////////////////////
 
+    public void populateBookDB() {
+        Log.i(TAG, "populateBookDB");
+        String selection =MediaStore.Audio.Media.DATA +" like ?";
+        String[] selectionArgs={"%"+File.pathSeparator+bookPath+File.pathSeparator+"%"};
+        ContentResolver mediaResolver = getContentResolver();
+        Cursor bookCursor = mediaResolver.query(
+                MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+                null,
+                selection,
+                selectionArgs,
+                null);
+        if (bookCursor.moveToFirst()) {
+            Log.i(TAG, "populateBookDB bookCursor");
+            int titleColumn = bookCursor.getColumnIndex(MediaStore.Audio.Media.TITLE);
+            int idColumn = bookCursor.getColumnIndex(MediaStore.Audio.Media._ID);
+            int authorColumn = bookCursor.getColumnIndex(MediaStore.Audio.Media.ARTIST);
+            int bookIDColumn = bookCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID);
+            int bookColumn = bookCursor.getColumnIndex(MediaStore.Audio.Media.ALBUM);
+            int durationColumn = bookCursor.getColumnIndex(MediaStore.Audio.Media.DURATION);
+            BookDBHelper bookDBHelper = new BookDBHelper(this);
+            ChapterDBHelper chapterDBHelper = new ChapterDBHelper(this);
+            do {
+                Log.i(TAG, "populateBookDB loop");
+                Chapter chapter = new Chapter();
+                long bookID = bookCursor.getLong(bookIDColumn);
+                long chapterID = bookCursor.getLong(idColumn);
+                String filePath = bookCursor.getString(0);
+                File file = new File(filePath);
+                Log.i(TAG, "populateBookDB" + file.getName());
+                Log.i(TAG, "populateBookDB" + file.getParent());
+                
+                if (!chapterDBHelper.getChapterInDB(chapterID)) {
+                    chapter.setDuration(bookCursor.getLong(durationColumn));
+                    chapter.setBookID(bookID);
+                    chapter.setId(chapterID);
+                    chapter.setFileName(file.getName());
+                    chapter.setTitle(bookCursor.getString(titleColumn));
+                    chapterDBHelper.insertChapter(chapter);
+                }
+                
+                if (!bookDBHelper.getBookInDB(bookID)) {
+                    Book book = new Book(bookID, bookCursor.getString(bookColumn), bookCursor.getString(authorColumn));
+                    book.setPath(file.getParent());
+                    bookDBHelper.insertBook(book);
+                }
+            } while (bookCursor.moveToNext());
+        }
+    }
 
 }

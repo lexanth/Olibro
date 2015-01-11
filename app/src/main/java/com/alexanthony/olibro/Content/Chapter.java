@@ -6,8 +6,8 @@ public class Chapter extends Track {
 
     }
 
-    public Chapter(long chapterID, String chapterTitle, String chapterAuthor, int chapterDuration, int chapterLastPlayedPosition, long chapterBookID) {
-        super(chapterID, chapterTitle, chapterAuthor, chapterDuration, chapterLastPlayedPosition, chapterBookID);
+    public Chapter(long chapterID, String chapterTitle, long chapterDuration, long chapterLastPlayedPosition, long chapterBookID) {
+        super(chapterID, chapterTitle, chapterDuration, chapterLastPlayedPosition, chapterBookID);
     }
 
     public long getBookID() {
